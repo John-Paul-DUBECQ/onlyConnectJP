@@ -20,7 +20,7 @@ const router = useRouter()
     <section class="game-menu" aria-labelledby="games-title">
       <div class="menu-heading">
         <h2 id="games-title">Les jeux</h2>
-        <span>01 disponible</span>
+        <span>02 disponibles</span>
       </div>
 
       <button class="game-card active" type="button" @click="router.push('/grid')">
@@ -32,14 +32,14 @@ const router = useRouter()
         <span class="card-arrow" aria-hidden="true">↗</span>
       </button>
 
-      <div class="game-card disabled" aria-disabled="true">
+      <button class="game-card active" type="button" @click="router.push('/missing-vowels')">
         <span class="card-number">02</span>
         <span class="card-content">
-          <strong>Les connexions</strong>
-          <span>Bientôt disponible</span>
+          <strong>Missing Vowels</strong>
+          <span>Retrouvez les voyelles disparues</span>
         </span>
-        <span class="card-lock" aria-hidden="true">—</span>
-      </div>
+        <span class="card-arrow" aria-hidden="true">↗</span>
+      </button>
     </section>
 
     <footer class="hub-footer">
