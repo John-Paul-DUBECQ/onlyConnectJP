@@ -1,0 +1,29 @@
+:root {
+  --color-ink: #17252b;
+  --color-muted: #718087;
+  --color-accent: #d26343;
+  --color-paper: #fffdf8;
+  --color-wash: #f2eee5;
+  --color-line: #d8d3c9;
+  --color-background: #e8e4da;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-ink);
+  background: var(--color-background);
+  line-height: 1.6;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
