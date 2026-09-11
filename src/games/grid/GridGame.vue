@@ -458,11 +458,18 @@ h2 {
   transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
-.tile:hover:not(:disabled),
 .tile.selected {
   transform: translateY(-3px);
   color: #fffdf8;
   background: var(--color-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover:not(:disabled) {
+    transform: translateY(-3px);
+    /* color: #fffdf8;
+    background: var(--color-ink); */
+  }
 }
 
 .tile:disabled {
