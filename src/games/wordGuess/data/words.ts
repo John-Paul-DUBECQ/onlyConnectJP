@@ -32,7 +32,11 @@ export const wordGroups: WordGroup[] = [
     title: 'Des acteurs et leur pays de naissance',
     items: ['Leonardo DiCaprio et Etats-Unis', "Joaquin Phoenix et Porto Rico", "Jean Reno et France", "Jackie Chan et Hong Kong"],
   },
-
+  {
+    id: 5,
+    title: 'Fable de la foontaine mais avec les animaux inversés',
+    items: ['le renard et le corbeau','la tortue et le lievre','le loup et le cheval','la cigogne et le renard','la fourmi et la cigale'],
+  },
 ]
 
 export const wordListSeeds: WordListSeed[] = [
@@ -40,6 +44,6 @@ export const wordListSeeds: WordListSeed[] = [
     seed: 'JP-001',
     description: 'Liste de mots de test pour les développeurs',
     duration: 'unlimited',
-    groupIds: [1, 2, 3, 4],
+    groupIds: [4, 2, 3, 1],
   },
 ]

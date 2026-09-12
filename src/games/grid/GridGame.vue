@@ -9,7 +9,45 @@ const router = useRouter()
 const selectedMode = String(route.query.mode ?? 'random')
 const selectedSeed = String(route.query.seed ?? '')
 const selectedPuzzle = gridSeeds.find((puzzle) => puzzle.seed === selectedSeed)
-const randomGroups = [...gridGroups].sort(() => Math.random() - 0.5).slice(0, 4)
+
+function shuffleGroups(groups: GridGroup[]) {
+  return [...groups].sort(() => Math.random() - 0.5)
+}
+
+function getRandomGroups(groups: GridGroup[], groupCount: number) {
+  function findCombination(
+    remainingGroups: GridGroup[],
+    selectedGroups: GridGroup[],
+    usedItems: Set<string>,
+  ): GridGroup[] | null {
+    if (selectedGroups.length === groupCount) {
+      return selectedGroups
+    }
+
+    for (const group of shuffleGroups(remainingGroups)) {
+      const groupItems = group.items.map((item) => item.trim().toLocaleLowerCase('fr-FR'))
+
+      if (groupItems.some((item) => usedItems.has(item))) {
+        continue
+      }
+
+      const nextGroups = remainingGroups.filter((candidate) => candidate.id !== group.id)
+      const nextItems = new Set(usedItems)
+      groupItems.forEach((item) => nextItems.add(item))
+      const result: GridGroup[] | null = findCombination(nextGroups, [...selectedGroups, group], nextItems)
+
+      if (result) {
+        return result
+      }
+    }
+
+    return null
+  }
+
+  return findCombination(groups, [], new Set()) ?? []
+}
+
+const randomGroups = getRandomGroups(gridGroups, 4)
 const activeGroups = computed<GridGroup[]>(() =>
   selectedMode === 'random'
     ? randomGroups

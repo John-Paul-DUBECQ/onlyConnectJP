@@ -47,7 +47,7 @@ const currentQuestion = computed(() => questions.value[questionIndex.value])
 const displayedAnswer = computed(() =>
   currentQuestion.value
     ? answerRevealed.value
-      ? currentQuestion.value.answer
+      ? currentQuestion.value.answer.toUpperCase()
       : missingVowels(currentQuestion.value.answer)
     : '',
 )
