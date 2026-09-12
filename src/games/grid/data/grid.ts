@@ -7,7 +7,7 @@ export type GridGroup = {
 export type GridSeed = {
   seed: string
   description: string
-  duration: number | 'unlimited'
+  duration?: number | 'unlimited' 
   groupIds: number[]
 }
 
@@ -74,7 +74,6 @@ export const gridSeeds: GridSeed[] = [
   {
     seed: 'JP-001',
     description: 'Grille de test pour les développeurs',
-    duration: 'unlimited',
     groupIds: [5, 4, 10, 11],
   },{
     seed: 'JP-002',

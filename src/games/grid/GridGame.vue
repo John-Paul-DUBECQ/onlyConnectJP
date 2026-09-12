@@ -47,11 +47,33 @@ function getRandomGroups(groups: GridGroup[], groupCount: number) {
   return findCombination(groups, [], new Set()) ?? []
 }
 
-const randomGroups = getRandomGroups(gridGroups, 4)
+const randomGroups = ref(getRandomGroups(gridGroups, 4))
+const customGroups = (() => {
+  if (selectedMode === 'custom-json') {
+    try {
+      const parsed = JSON.parse(String(route.query.json ?? '')) as GridGroup[]
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+
+  if (selectedMode === 'custom-ids') {
+    return String(route.query.groups ?? '')
+      .split(',')
+      .map((value) => Number(value.trim()))
+      .map((id) => gridGroups.find((group) => group.id === id))
+      .filter((group): group is GridGroup => group !== undefined)
+  }
+
+  return []
+})()
 const activeGroups = computed<GridGroup[]>(() =>
   selectedMode === 'random'
-    ? randomGroups
-    : gridSeeds
+    ? randomGroups.value
+    : selectedMode === 'custom-json' || selectedMode === 'custom-ids'
+      ? customGroups
+      : gridSeeds
         .find((puzzle) => puzzle.seed === selectedSeed)
         ?.groupIds.map((id) => gridGroups.find((group) => group.id === id))
         .filter((group): group is GridGroup => group !== undefined) ?? [],
@@ -62,13 +84,15 @@ const selectedDuration =
     : String(route.query.time ?? '90')
 const isUnlimited = selectedDuration === 'unlimited'
 const duration = Number(selectedDuration)
-const remainingSeconds = ref(Number.isFinite(duration) ? duration : 90)
+const initialRemainingSeconds = Number.isFinite(duration) ? duration : 90
+const remainingSeconds = ref(initialRemainingSeconds)
 let timer: ReturnType<typeof setInterval> | undefined
 
 const selectedItems = ref<string[]>([])
 const solvedGroups = ref<number[]>([])
 const revealedGroups = ref<number[]>([])
 const wrongAttempts = ref(0)
+const hasEnded = ref(false)
 const message = ref('Sélectionnez quatre éléments qui partagent un lien.')
 
 const boardItems = computed(() => {
@@ -110,26 +134,34 @@ function solveGroup(groupIndex: number) {
   selectedItems.value = []
 }
 
-function fillLastGroup(isFound = false) {
-  const lastGroupIndex = activeGroups.value.findIndex((_, index) => !solvedGroups.value.includes(index))
+function revealRemainingGroups() {
+  const remainingGroupIndexes = activeGroups.value
+    .map((_, index) => index)
+    .filter(
+      (index) => !solvedGroups.value.includes(index) && !revealedGroups.value.includes(index),
+    )
 
-  if (lastGroupIndex === -1) {
+  if (!remainingGroupIndexes.length) {
     return
   }
 
-  if (isFound) {
-    solveGroup(lastGroupIndex)
-    message.value = `Dernier groupe trouvé : ${getGroupTitle(lastGroupIndex)}.`
-    return
-  }
-
-  revealedGroups.value = [...revealedGroups.value, lastGroupIndex]
+  revealedGroups.value = [...revealedGroups.value, ...remainingGroupIndexes]
   selectedItems.value = []
-  message.value = `Dernier groupe révélé : ${getGroupTitle(lastGroupIndex)}. Il ne compte pas comme trouvé.`
+}
+
+function finishGame(messageText: string) {
+  hasEnded.value = true
+  revealRemainingGroups()
+  message.value = messageText
+  if (timer) clearInterval(timer)
+}
+
+function skipGame() {
+  finishGame('Manche passée. Les groupes restants sont révélés, mais ne comptent pas comme trouvés.')
 }
 
 function checkSelection() {
-  if (!isUnlimited && remainingSeconds.value === 0) {
+  if (hasEnded.value || (!isUnlimited && remainingSeconds.value === 0)) {
     return
   }
 
@@ -151,17 +183,7 @@ function checkSelection() {
       message.value = `Ce groupe ne semble pas correct. Il vous reste ${attemptsRemaining.value} essai${attemptsRemaining.value > 1 ? 's' : ''}.`
 
       if (wrongAttempts.value >= 3) {
-        fillLastGroup(false)
-        const otherGroupIndex = activeGroups.value.findIndex(
-          (_, index) =>
-            !solvedGroups.value.includes(index) && !revealedGroups.value.includes(index),
-        )
-
-        if (otherGroupIndex !== -1) {
-          revealedGroups.value = [...revealedGroups.value, otherGroupIndex]
-        }
-
-        message.value = 'Les trois essais sont utilisés. Les deux derniers groupes sont révélés, mais ne comptent pas comme trouvés.'
+        finishGame('Les trois essais sont utilisés. Les groupes restants sont révélés, mais ne comptent pas comme trouvés.')
       }
       return
     }
@@ -175,42 +197,67 @@ function checkSelection() {
   message.value = `Bien vu : ${getGroupTitle(groupIndex)}.`
 
   if (solvedGroups.value.length === 3) {
-    fillLastGroup(true)
+    const lastGroupIndex = activeGroups.value.findIndex((_, index) => !solvedGroups.value.includes(index))
+    if (lastGroupIndex !== -1) {
+      solveGroup(lastGroupIndex)
+      message.value = `Dernier groupe trouvé : ${getGroupTitle(lastGroupIndex)}.`
+    }
   }
 }
 
 function finishOnTimeout() {
   remainingSeconds.value = 0
-  selectedItems.value = []
-  message.value = 'Le temps est écoulé. Recommencez la grille pour retenter votre chance.'
+  finishGame('Le temps est écoulé. Les groupes restants sont révélés, mais ne comptent pas comme trouvés.')
 }
 
-onMounted(() => {
+function refreshRandomGroups() {
+  const previousIds = randomGroups.value.map((group) => group.id).sort().join(',')
+  let nextGroups = getRandomGroups(gridGroups, 4)
+  let attempts = 0
+
+  while (nextGroups.map((group) => group.id).sort().join(',') === previousIds && attempts < 10) {
+    nextGroups = getRandomGroups(gridGroups, 4)
+    attempts += 1
+  }
+
+  randomGroups.value = nextGroups
+}
+
+function startTimer() {
   if (isUnlimited) {
     return
   }
 
+  if (timer) clearInterval(timer)
   timer = setInterval(() => {
     if (remainingSeconds.value <= 1) {
       finishOnTimeout()
-      if (timer) clearInterval(timer)
       return
     }
 
     remainingSeconds.value -= 1
   }, 1000)
-})
+}
+
+onMounted(startTimer)
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
 })
 
 function resetGrid() {
+  if (selectedMode === 'random') {
+    refreshRandomGroups()
+  }
+
   selectedItems.value = []
   solvedGroups.value = []
   revealedGroups.value = []
   wrongAttempts.value = 0
+  hasEnded.value = false
+  remainingSeconds.value = initialRemainingSeconds
   message.value = 'Sélectionnez quatre éléments qui partagent un lien.'
+  startTimer()
 }
 </script>
 
@@ -269,7 +316,7 @@ function resetGrid() {
           type="button"
           role="gridcell"
           :aria-pressed="selectedItems.includes(item)"
-          :disabled="attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)"
+          :disabled="hasEnded || attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)"
           @click="toggleItem(item)"
         >
           {{ item }}
@@ -278,9 +325,14 @@ function resetGrid() {
 
       <div class="game-controls">
         <p class="game-message" :class="{ success: message.startsWith('Bien vu') }">{{ message }}</p>
-        <button class="check-button" type="button" :disabled="selectedItems.length !== 4 || attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)" @click="checkSelection">
-          Valider le groupe <span aria-hidden="true">↗</span>
-        </button>
+        <div class="control-buttons">
+          <button class="skip-button" type="button" :disabled="hasEnded || solvedCount === 4" @click="skipGame">
+            Passer <span aria-hidden="true">↗</span>
+          </button>
+          <button class="check-button" type="button" :disabled="hasEnded || selectedItems.length !== 4 || attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)" @click="checkSelection">
+            Valider le groupe <span aria-hidden="true">↗</span>
+          </button>
+        </div>
       </div>
     </section>
   </main>
@@ -520,6 +572,11 @@ h2 {
   margin-top: 28px;
 }
 
+.control-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .game-message {
   max-width: 460px;
   color: var(--color-muted);
@@ -540,7 +597,18 @@ h2 {
   cursor: pointer;
 }
 
-.check-button:disabled {
+.skip-button {
+  padding: 13px 16px;
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.check-button:disabled,
+.skip-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -615,7 +683,12 @@ h2 {
     flex-direction: column;
   }
 
-  .check-button {
+  .control-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .check-button,
+  .skip-button {
     width: 100%;
   }
 }
