@@ -6,7 +6,7 @@ import { wordListSeeds } from './data/words'
 const router = useRouter()
 const selectedMode = ref('random')
 const playMode = ref<'caster' | 'write'>('write')
-const totalTime = ref<number | 'unlimited'>(60)
+const totalTime = ref<number | 'unlimited'>("unlimited")
 const hostQuestionTime = ref(8)
 const allowMultipleAttempts = ref(true)
 

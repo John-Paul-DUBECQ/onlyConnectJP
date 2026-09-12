@@ -7,7 +7,7 @@ export type WordGroup = {
 export type WordListSeed = {
   seed: string
   description: string
-  duration: number | 'unlimited'
+  duration?: number | 'unlimited'
   groupIds: number[]
 }
 
@@ -29,13 +29,13 @@ export const wordGroups: WordGroup[] = [
   },
   {
     id: 4,
-    title: 'Des acteurs et leur pays de naissance',
-    items: ['Leonardo DiCaprio et Etats-Unis', "Joaquin Phoenix et Porto Rico", "Jean Reno et France", "Jackie Chan et Hong Kong"],
+    title: 'Fable de la fontaine mais avec les animaux inversés',
+    items: ['le renard et le corbeau','la tortue et le lievre','le loup et le cheval','la cigogne et le renard','la fourmi et la cigale'],
   },
   {
     id: 5,
-    title: 'Fable de la foontaine mais avec les animaux inversés',
-    items: ['le renard et le corbeau','la tortue et le lievre','le loup et le cheval','la cigogne et le renard','la fourmi et la cigale'],
+    title: 'Les deux Terminus de stations de métro parisiennes',
+    items: ['porte dauphine et nation','la defense et le chateau de vincennes','pont de sevres et mairie de montreuil','porte des lilas et gambetta'],
   },
 ]
 
@@ -43,7 +43,6 @@ export const wordListSeeds: WordListSeed[] = [
   {
     seed: 'JP-001',
     description: 'Liste de mots de test pour les développeurs',
-    duration: 'unlimited',
     groupIds: [4, 2, 3, 1],
   },
 ]
