@@ -13,21 +13,6 @@ export type GridSeed = {
 
 export const gridGroups: GridGroup[] = [
   {
-    id: 1,
-    title: 'Animaux qui hibernent',
-    items: ['Ours', 'Marmotte', 'Hérisson', 'Chauve-souris'],
-  },
-  {
-    id: 2,
-    title: 'Instruments à cordes',
-    items: ['Violon', 'Harpe', 'Guitare', 'Contrebasse'],
-  },
-  {
-    id: 3,
-    title: 'Éléments de la cuisine japonaise',
-    items: ['Miso', 'Tofu', 'Wasabi', 'Nori'],
-  },
-  {
     id: 4,
     title: 'Mots associés à la mer',
     items: ['Vague', 'Marée', 'Écume', 'Plage'],
@@ -107,6 +92,21 @@ export const gridGroups: GridGroup[] = [
     title: 'Palais parisiens',
     items: ['Luxembourg', 'Royal', 'Grand', 'Glaces'],
   },
+  {
+    id: 20,
+    title: 'Premiers ministres de la Vème République française',
+    items: ['Messmer', 'Cresson', 'Barre', 'Borne'],
+  },
+  {
+    id: 21,
+    title: 'Race de chat',
+    items: ['Norvégien', 'Siamois', 'Somali', 'Sphynx'],
+  },
+  {
+    id: 22,
+    title: 'Capitales des Etats d\'Amérique',
+    items: ['Providence', 'Montpelier', 'Pierre', 'Baton Rouge'],
+  },
 ]
 
 export const gridSeeds: GridSeed[] = [
@@ -125,4 +125,10 @@ export const gridSeeds: GridSeed[] = [
     description: 'Grille de test 3',
     groupIds: [12, 13, 18, 19],
   },
+  {
+    seed: 'JP-004',
+    description: 'Grille de test 4',
+    groupIds: [15, 22, 20, 21],
+  },
+
 ]
