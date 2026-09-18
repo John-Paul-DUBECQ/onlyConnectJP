@@ -324,15 +324,12 @@ function resetGrid() {
       </div>
 
       <div class="game-controls">
-        <p class="game-message" :class="{ success: message.startsWith('Bien vu') }">{{ message }}</p>
-        <div class="control-buttons">
           <button class="skip-button" type="button" :disabled="hasEnded || solvedCount === 4" @click="skipGame">
             Passer <span aria-hidden="true">↗</span>
           </button>
           <button class="check-button" type="button" :disabled="hasEnded || selectedItems.length !== 4 || attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)" @click="checkSelection">
             Valider le groupe <span aria-hidden="true">↗</span>
           </button>
-        </div>
       </div>
     </section>
   </main>
