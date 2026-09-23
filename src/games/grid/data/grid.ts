@@ -13,6 +13,21 @@ export type GridSeed = {
 
 export const gridGroups: GridGroup[] = [
   {
+    id: 1,
+    title: 'Surnoms de Carolingiens',
+    items: ['Bref', 'Outremer', 'Pieux', 'Grand'],
+  },
+  {
+    id: 2,
+    title: 'Poly_____',
+    items: ['Gone', 'Mère', 'Game', 'Glotte'],
+  },
+  {
+    id: 3,
+    title: 'Homophone de ville française',
+    items: ['Reine', 'Lion', 'Quand', 'L\'Ile'],
+  },
+  {
     id: 4,
     title: 'Mots associés à la mer',
     items: ['Vague', 'Marée', 'Écume', 'Plage'],
@@ -107,6 +122,11 @@ export const gridGroups: GridGroup[] = [
     title: 'Capitales des Etats d\'Amérique',
     items: ['Providence', 'Montpelier', 'Pierre', 'Baton Rouge'],
   },
+  {
+    id: 23,
+    title: 'Mots de l\'alphabet phonétique international',
+    items: ['Bravo', 'Lima', 'Oscar', 'Echo'],
+  }
 ]
 
 export const gridSeeds: GridSeed[] = [
@@ -130,5 +150,14 @@ export const gridSeeds: GridSeed[] = [
     description: 'Grille de test 4',
     groupIds: [15, 22, 20, 21],
   },
-
+  {
+    seed: 'JP-005',
+    description: 'Grille de test 5',
+    groupIds: [3, 3, 3, 3],
+  },
+  {
+    seed: 'JP-006',
+    description: 'Grille de test 6',
+    groupIds: [3, 2, 23, 1],
+  },
 ]

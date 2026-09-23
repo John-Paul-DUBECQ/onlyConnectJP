@@ -230,7 +230,9 @@ legend {
 }
 
 .option-list {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -267,6 +269,10 @@ legend {
 .option-card span {
   display: grid;
   gap: 2px;
+}
+
+.seed-card {
+  flex: 1;
 }
 
 .seed-card small {
