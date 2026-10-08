@@ -126,6 +126,11 @@ export const gridGroups: GridGroup[] = [
     id: 23,
     title: 'Mots de l\'alphabet phonétique international',
     items: ['Bravo', 'Lima', 'Oscar', 'Echo'],
+  },
+  {
+    id: 24,
+    title: 'L\'ile ___ dans la fiction',
+    items: ['Enfants', 'Trésor', 'Mystérieuse', 'Noire'],
   }
 ]
 
@@ -149,11 +154,6 @@ export const gridSeeds: GridSeed[] = [
     seed: 'JP-004',
     description: 'Grille de test 4',
     groupIds: [15, 22, 20, 21],
-  },
-  {
-    seed: 'JP-005',
-    description: 'Grille de test 5',
-    groupIds: [3, 3, 3, 3],
   },
   {
     seed: 'JP-006',
