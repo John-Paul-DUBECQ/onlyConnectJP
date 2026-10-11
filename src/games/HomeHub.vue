@@ -7,12 +7,10 @@ const router = useRouter()
 <template>
   <main class="hub-shell">
     <header class="hub-header">
-      <p class="eyebrow">Only Connect · Japan</p>
-      <p class="edition">Édition 01 / 2026</p>
+      <p class="eyebrow">Only Connect JP</p>
     </header>
 
     <section class="hub-intro">
-      <p class="section-kicker">Le terrain de jeu</p>
       <h1>Connectez<br /><em>les idées.</em></h1>
       <p class="subtitle">Choisissez une manche et trouvez les liens cachés entre les indices.</p>
     </section>
@@ -20,7 +18,6 @@ const router = useRouter()
     <section class="game-menu" aria-labelledby="games-title">
       <div class="menu-heading">
         <h2 id="games-title">Les jeux</h2>
-        <span>02 disponibles</span>
       </div>
 
       <button class="game-card active" type="button" @click="router.push('/grid')">

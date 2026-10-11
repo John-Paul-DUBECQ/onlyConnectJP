@@ -73,7 +73,7 @@ function startGame() {
   <main class="setup-shell">
     <header class="setup-header">
       <button class="back-button" type="button" @click="router.push('/')">← Accueil</button>
-      <p class="eyebrow">Manche 01 · Configuration</p>
+      <p class="eyebrow">Configuration</p>
     </header>
 
     <section class="setup-content" aria-labelledby="setup-title">
