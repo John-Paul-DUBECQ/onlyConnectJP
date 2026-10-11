@@ -285,7 +285,12 @@ function resetGrid() {
           <p class="section-kicker">Trouvez les connexions</p>
           <h2 id="board-title">Quatre groupes de quatre</h2>
         </div>
-        <button class="reset-button" type="button" @click="resetGrid">Recommencer</button>
+        <div class="button-group">
+          <button class="skip-button" type="button" :disabled="hasEnded || solvedCount === 4" @click="skipGame">
+            Passer
+          </button>
+          <button class="reset-button" type="button" @click="resetGrid">Recommencer</button>
+        </div>
       </div>
 
       <div v-if="displayedGroups.length" class="solved-groups" aria-label="Descriptions des groupes">
@@ -324,9 +329,6 @@ function resetGrid() {
       </div>
 
       <div class="game-controls">
-          <button class="skip-button" type="button" :disabled="hasEnded || solvedCount === 4" @click="skipGame">
-            Passer <span aria-hidden="true">↗</span>
-          </button>
           <button class="check-button" type="button" :disabled="hasEnded || selectedItems.length !== 4 || attemptsRemaining === 0 || (!isUnlimited && remainingSeconds === 0)" @click="checkSelection">
             Valider le groupe <span aria-hidden="true">↗</span>
           </button>
@@ -340,6 +342,13 @@ function resetGrid() {
   width: min(100%, 1120px);
   margin: 0 auto;
   padding: 48px 32px 32px;
+}
+
+.button-group {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .game-header,

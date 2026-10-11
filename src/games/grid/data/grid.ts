@@ -76,26 +76,15 @@ export const gridGroups: GridGroup[] = [
     id: 13,
     title: '\"Chef de/d\' _____\"',
     items: ['Rang', 'Projet', 'Cuisine', 'Œuvre'],
-  },
-  {
+  },{
     id: 14,
-    title: 'Villes belges',
-    items: ['La panne', 'Namur', 'Malines', 'Saint-Nicolas'],
+    title: 'Dieux celtiques',
+    items: ['Lug', 'Epona', 'Cernunnos', 'Toutatis'],
   },
   {
     id: 15,
     title: '« 1 » se cache à la fin',
     items: ['Bruno', 'Verdun', 'Frein', 'Madone'],
-  },
-  {
-    id: 16,
-    title: '« Coup de _____ »',
-    items: ['Foudre', 'Main', 'Grâce', 'Vieux'],
-  },
-  {
-    id: 17,
-    title: 'Peuvent être précédés de « contre- »',
-    items: ['Attaque', 'Poids', 'Temps', 'Jour'],
   },
   {
     id: 18,
@@ -131,7 +120,17 @@ export const gridGroups: GridGroup[] = [
     id: 24,
     title: 'L\'ile ___ dans la fiction',
     items: ['Enfants', 'Trésor', 'Mystérieuse', 'Noire'],
-  }
+  },
+  {
+    id: 25,
+    title: 'personnages de la Comedia dell\'arte',
+    items: ['Pantalon', 'Polichinelle', 'Briguelle', 'Scapin'],
+  },
+  {
+    id: 26,
+    title: 'Os du corps humain',
+    items: ['Trapèze', 'Talus', 'Marteau', 'Enclume'],
+  },
 ]
 
 export const gridSeeds: GridSeed[] = [
@@ -156,8 +155,12 @@ export const gridSeeds: GridSeed[] = [
     groupIds: [15, 22, 20, 21],
   },
   {
+    seed: 'JP-005',
+    description: 'Grille de test 5',
+    groupIds: [3, 2, 23, 1],
+  },{
     seed: 'JP-006',
     description: 'Grille de test 6',
-    groupIds: [3, 2, 23, 1],
+    groupIds: [24, 25, 26, 14],
   },
 ]
