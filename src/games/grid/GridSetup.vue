@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { gridGroups, gridSeeds, type GridGroup } from './data/grid'
+import { gridGroups, gridSeeds, type GridGroup, type GridSeed } from './data/grid'
+import { readCompletedGridSeeds } from './data/gridProgress'
 
 const router = useRouter()
 const selectedMode = ref('random')
@@ -9,13 +10,31 @@ const duration = ref<number | 'unlimited'>("unlimited")
 const customGroupIds = ref('1,2,3,4')
 const customJson = ref(JSON.stringify(gridGroups.slice(0, 4), null, 2))
 const formError = ref('')
+const completedSeeds = ref<string[]>([])
+const progressError = ref('')
 
-function getSelectedSeedDuration() {
-  return gridSeeds.find((puzzle) => puzzle.seed === selectedMode.value)?.duration ?? duration.value
+try {
+  completedSeeds.value = readCompletedGridSeeds()
+} catch {
+  progressError.value = 'La progression de la campagne est momentanément indisponible.'
+}
+
+function isSeedCompleted(seed: string) {
+  return completedSeeds.value.includes(seed)
+}
+
+function startCampaignGrid(puzzle: GridSeed) {
+  router.push({
+    path: '/grid/play',
+    query: {
+      seed: puzzle.seed,
+      mode: 'seed',
+      time: String(puzzle.duration ?? 'unlimited'),
+    },
+  })
 }
 
 function startGame() {
-  const isRandomMode = selectedMode.value === 'random'
   formError.value = ''
 
   if (selectedMode.value === 'custom-ids') {
@@ -61,9 +80,8 @@ function startGame() {
   router.push({
     path: '/grid/play',
     query: {
-      seed: isRandomMode ? '' : selectedMode.value,
-      mode: isRandomMode ? 'random' : 'seed',
-      time: String(isRandomMode ? duration.value : getSelectedSeedDuration()),
+      mode: 'random',
+      time: String(duration.value),
     },
   })
 }
@@ -78,23 +96,40 @@ function startGame() {
 
     <section class="setup-content" aria-labelledby="setup-title">
       <p class="section-kicker">Avant de commencer</p>
-      <h1 id="setup-title">Préparez<br /><em>la grille.</em></h1>
-      <p class="subtitle">Choisissez le temps de réflexion et la manière de composer les quatre groupes.</p>
+      <h1 id="setup-title">La campagne<br /><em>des grilles.</em></h1>
+      <p class="subtitle">Parcourez les grilles une à une. Votre progression est conservée sur cet appareil.</p>
+
+      <section class="campaign-section" aria-labelledby="campaign-title">
+        <div class="campaign-heading">
+          <div>
+            <p class="section-kicker">Votre parcours</p>
+            <h2 id="campaign-title">La campagne</h2>
+          </div>
+          <p class="campaign-count">{{ completedSeeds.length }} / {{ gridSeeds.length }} terminée{{ completedSeeds.length === 1 ? '' : 's' }}</p>
+        </div>
+
+        <p v-if="progressError" class="progress-error" role="status">{{ progressError }}</p>
+
+        <ol class="campaign-list">
+          <li v-for="(puzzle, index) in gridSeeds" :key="puzzle.seed" class="campaign-step">
+            <button
+              class="campaign-node"
+              :class="{ completed: isSeedCompleted(puzzle.seed) }"
+              type="button"
+              :aria-label="`Grille ${index + 1}${isSeedCompleted(puzzle.seed) ? ', réussie' : ''}`"
+              @click="startCampaignGrid(puzzle)"
+            >
+              <span aria-hidden="true">{{ isSeedCompleted(puzzle.seed) ? '✓' : index + 1 }}</span>
+            </button>
+            <span v-if="index < gridSeeds.length - 1" class="campaign-connector" aria-hidden="true"></span>
+          </li>
+        </ol>
+      </section>
 
       <form class="options-form" @submit.prevent="startGame">
         <fieldset>
-          <legend>Temps de jeu</legend>
-          <div class="option-list time-options">
-            <label v-for="option in [60, 90, 120, 150, 180, 300, 'unlimited']" :key="option" class="option-card">
-              <input v-model="duration" type="radio" name="duration" :value="option" :disabled="gridSeeds.some((puzzle) => puzzle.seed === selectedMode)" />
-              <span>{{ option === 'unlimited' ? 'Temps illimité' : `${option} s` }}</span>
-            </label>
-          </div>
-          <p v-if="gridSeeds.some((puzzle) => puzzle.seed === selectedMode)" class="field-note">La durée est définie par la seed sélectionnée.</p>
-        </fieldset>
-
-        <fieldset>
-          <legend>Composition de la grille</legend>
+          <legend>Autres façons de jouer</legend>
+          <p class="subtitle options-intro">Lancez une grille aléatoire ou composez la vôtre.</p>
           <div class="option-list seed-options">
             <label class="option-card seed-card">
               <input v-model="selectedMode" type="radio" name="mode" value="random" />
@@ -117,14 +152,6 @@ function startGame() {
                 <small>Créez vos quatre groupes directement</small>
               </span>
             </label>
-            <label v-for="puzzle in gridSeeds" :key="puzzle.seed" class="option-card seed-card">
-              <input v-model="selectedMode" type="radio" name="mode" :value="puzzle.seed" />
-              <span>
-                <strong>{{ puzzle.seed }}</strong>
-                <small>{{ puzzle.description }}</small>
-                {{ puzzle.duration ? `Durée : ${puzzle.duration} s` : 'Durée illimitée' }}
-              </span>
-            </label>
           </div>
           <div v-if="selectedMode === 'custom-ids'" class="custom-input">
             <label for="custom-group-ids">IDs des groupes</label>
@@ -137,6 +164,17 @@ function startGame() {
             <small>Remplacez les valeurs de l’exemple en conservant quatre groupes et quatre éléments par groupe.</small>
           </div>
           <p v-if="formError" class="form-error" role="alert">{{ formError }}</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Temps de jeu</legend>
+          <div class="option-list time-options">
+            <label v-for="option in [60, 90, 120, 150, 180, 300, 'unlimited']" :key="option" class="option-card">
+              <input v-model="duration" type="radio" name="duration" :value="option" />
+              <span>{{ option === 'unlimited' ? 'Temps illimité' : `${option} s` }}</span>
+            </label>
+          </div>
+          <p class="field-note">Les grilles de la campagne gardent leur durée prévue.</p>
         </fieldset>
 
         <button class="start-button" type="submit">
@@ -189,6 +227,14 @@ function startGame() {
   margin-top: 96px;
 }
 
+h2 {
+  margin-top: 6px;
+  color: var(--color-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  letter-spacing: -0.04em;
+}
+
 h1 {
   margin-top: 10px;
   color: var(--color-ink);
@@ -213,7 +259,7 @@ h1 em {
 .options-form {
   display: grid;
   gap: 38px;
-  margin-top: 64px;
+  margin-top: 72px;
 }
 
 fieldset {
@@ -232,7 +278,6 @@ legend {
 .option-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 10px;
 }
 
@@ -271,8 +316,103 @@ legend {
   gap: 2px;
 }
 
+.campaign-section {
+  margin-top: 64px;
+}
+
+.campaign-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.campaign-count {
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.campaign-list {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 20px 0;
+  padding: 0;
+  padding-top: 20px;
+  padding-bottom: 4px;
+  list-style: none;
+}
+
+.campaign-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campaign-node {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 2px solid var(--color-line);
+  border-radius: 50%;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.campaign-node:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+.campaign-node.completed {
+  border-color: var(--color-accent);
+  color: #fffdf8;
+  background: var(--color-accent);
+}
+
+.campaign-connector {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: calc(50% + 29px);
+  width: calc(100% - 58px);
+  height: 2px;
+  background: var(--color-line);
+}
+
+.campaign-step:nth-child(8n) .campaign-connector,
+.campaign-step:last-child .campaign-connector {
+  display: none;
+}
+
+.campaign-node {
+  position: relative;
+  z-index: 1;
+}
+
+.progress-error {
+  margin-top: 12px;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
+.options-intro {
+  margin: -4px 0 14px;
+  font-size: 0.82rem;
+}
+
 .seed-card {
   flex: 1;
+  min-width: 190px;
 }
 
 .seed-card small {
@@ -359,6 +499,40 @@ legend {
 
   .setup-content {
     margin-top: 72px;
+  }
+
+  .campaign-section {
+    margin-top: 48px;
+  }
+
+  .campaign-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .campaign-node {
+    width: 52px;
+    height: 52px;
+  }
+
+  .campaign-list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px 0;
+  }
+
+  .campaign-connector {
+    left: calc(50% + 26px);
+    width: calc(100% - 52px);
+  }
+
+  .campaign-step:nth-child(8n) .campaign-connector {
+    display: block;
+  }
+
+  .campaign-step:nth-child(6n) .campaign-connector,
+  .campaign-step:last-child .campaign-connector {
+    display: none;
   }
 
   .time-options {

@@ -3,12 +3,14 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { GridGroup } from './data/grid'
 import { gridGroups, gridSeeds } from './data/grid'
+import { completeGridSeed } from './data/gridProgress'
 
 const route = useRoute()
 const router = useRouter()
 const selectedMode = String(route.query.mode ?? 'random')
 const selectedSeed = String(route.query.seed ?? '')
 const selectedPuzzle = gridSeeds.find((puzzle) => puzzle.seed === selectedSeed)
+const progressError = ref('')
 
 function shuffleGroups(groups: GridGroup[]) {
   return [...groups].sort(() => Math.random() - 0.5)
@@ -150,10 +152,22 @@ function revealRemainingGroups() {
 }
 
 function finishGame(messageText: string) {
+  if (hasEnded.value) {
+    return
+  }
+
   hasEnded.value = true
   revealRemainingGroups()
   message.value = messageText
   if (timer) clearInterval(timer)
+
+  if (selectedMode === 'seed' && selectedPuzzle) {
+    try {
+      completeGridSeed(selectedPuzzle.seed)
+    } catch {
+      progressError.value = 'La grille est terminée, mais sa progression n’a pas pu être enregistrée.'
+    }
+  }
 }
 
 function skipGame() {
@@ -202,6 +216,10 @@ function checkSelection() {
       solveGroup(lastGroupIndex)
       message.value = `Dernier groupe trouvé : ${getGroupTitle(lastGroupIndex)}.`
     }
+  }
+
+  if (solvedGroups.value.length === 4) {
+    finishGame('Grille terminée ! Tous les groupes ont été trouvés.')
   }
 }
 
@@ -266,7 +284,7 @@ function resetGrid() {
     <header class="game-header">
       <button class="back-button" type="button" @click="router.push('/grid')">← Options</button>
       <div class="game-title">
-        <p class="eyebrow">Manche 01</p>
+        <p class="eyebrow">{{ selectedPuzzle ? `Campagne · ${selectedPuzzle.seed}` : 'Manche 01' }}</p>
         <h1>La grille</h1>
       </div>
       <span v-if="isUnlimited" class="timer unlimited">Temps illimité</span>
@@ -280,6 +298,8 @@ function resetGrid() {
     </header>
 
     <section class="board-area" aria-labelledby="board-title">
+      <p v-if="progressError" class="progress-error" role="alert">{{ progressError }}</p>
+
       <div class="board-heading">
         <div>
           <p class="section-kicker">Trouvez les connexions</p>
@@ -440,6 +460,12 @@ h2 {
 
 .board-area {
   margin-top: 72px;
+}
+
+.progress-error {
+  margin-bottom: 16px;
+  color: var(--color-accent);
+  font-size: 0.78rem;
 }
 
 .board-heading {
