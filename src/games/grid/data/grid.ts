@@ -134,11 +134,71 @@ export const gridGroups: GridGroup[] = [
     id: 30,
     title: 'Tribus amérindiennes',
     items: ['Cheyennes', 'Sioux', 'Navajos', 'Inuits'],
+  },{
+    id: 31,
+    title: 'Gares parisiennes',
+    items: ['Montparnasse', 'Lyon', 'Nord', 'Austerlitz'],
+  },{
+    id: 32,
+    title: 'Cocktails à base de bière',
+    items: ['Diesel', 'Black Velvet', 'Monaco', 'Panaché'],
+  },{
+    id: 33,
+    title: 'Arbres fruitiers',
+    items: ['Plaqueminier', 'Arbousier', 'Pêcher', 'Jacquier'],
+  },{
+    id: 34,
+    title: 'Pizzas',
+    items: ['Reine', 'Capricciosa', 'Forestière', 'Tartiflette'],
+  },{
+    id: 35,
+    title: 'Créatures du folklore scandinave',
+    items: ['Troll', 'Kraken', 'Draugr', 'Nøkken'],
+  },{
+    id: 36,
+    title: 'Groupes français des années 80',
+    items: ['Niagara', 'Indochine', 'Images', 'Gold'],
+  },{
+    id: 37,
+    title: 'Astérix et (le/les) ...',
+    items: ['Cléopâtre', 'Glaive', 'Latraviata', 'Goths'],
+  },{
+    id: 38,
+    title: 'Niveaux de ski pour enfants',
+    items: ['Ourson', 'Blanchot', 'Sifflote', 'Garolou'],
+  },{
+    id: 39,
+    title: 'Instrument de percussion',
+    items: ['Cloche', 'Gong', 'Triangle', 'Maracas'],
+  },{
+    id: 40,
+    title: 'Monnaies du monde',
+    items: ['Livre', 'Couronne', 'Franc', 'Dong'],
+  },{
+    id: 41,
+    title: 'Danses',
+    items: ['Farandole', 'Ronde', 'Rumba', 'Madison'],
+  },{
+    id: 42,
+    title: 'Type de papier',
+    items: ['Calque', 'Peint', 'Toilette', 'Bible'],
   },
 ]
 
 export const gridSeeds: GridSeed[] = [
   {
+    seed: 'JP-0012',
+    description: 'Grille de test 12',
+    groupIds: [39, 40, 41, 42],
+  },{
+    seed: 'JP-0013',
+    description: 'Grille de test 13',
+    groupIds: [35, 36, 37, 38],
+  },{
+    seed: 'JP-0014',
+    description: 'Grille de test 14',
+    groupIds: [31, 32, 33, 34],
+  },{
     seed: 'JP-0015',
     description: 'Grille de test 15',
     groupIds: [27, 28, 29, 30],
