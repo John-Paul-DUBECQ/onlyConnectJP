@@ -182,11 +182,31 @@ export const gridGroups: GridGroup[] = [
     id: 42,
     title: 'Type de papier',
     items: ['Calque', 'Peint', 'Toilette', 'Bible'],
+  },{
+    id: 43,
+    title: 'Épreuves de lancer au Jeux Olympiques',
+    items: ['Poids', 'Disque', 'Marteau', 'Javelot'],
+  },{
+    id: 44,
+    title: 'Éléments du tableau périodique',
+    items: ['Or', 'Tennesse', 'Iode', 'Lutécium'],
+  },{
+    id: 45,
+    title: 'Pâtes',
+    items: ['Alphabet', 'Crozet', 'Farfalle', 'Rotelle'],
+  },{
+    id: 46,
+    title: 'Cols',
+    items: ['V', 'Français', 'Mao', 'Rond'],
   },
 ]
 
 export const gridSeeds: GridSeed[] = [
   {
+    seed: 'JP-0011',
+    description: 'Grille de test 11',
+    groupIds: [43, 44, 45, 46],
+  },{
     seed: 'JP-0012',
     description: 'Grille de test 12',
     groupIds: [39, 40, 41, 42],
