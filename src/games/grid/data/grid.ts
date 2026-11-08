@@ -164,8 +164,8 @@ export const gridGroups: GridGroup[] = [
     items: ['Cléopâtre', 'Glaive', 'Latraviata', 'Goths'],
   },{
     id: 38,
-    title: 'Niveaux de ski pour enfants',
-    items: ['Ourson', 'Blanchot', 'Sifflote', 'Garolou'],
+    title: 'Niveaux de ski',
+    items: ['Ourson', 'Flocon', 'Piou-Piou', '1ère étoile'],
   },{
     id: 39,
     title: 'Instrument de percussion',
