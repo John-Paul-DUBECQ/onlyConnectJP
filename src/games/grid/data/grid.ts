@@ -159,13 +159,13 @@ export const gridGroups: GridGroup[] = [
     title: 'Groupes français des années 80',
     items: ['Niagara', 'Indochine', 'Images', 'Gold'],
   },{
-    id: 37,
+    id: 41,
     title: 'Astérix et (le/les) ...',
     items: ['Cléopâtre', 'Glaive', 'Latraviata', 'Goths'],
   },{
     id: 38,
     title: 'Niveaux de ski',
-    items: ['Ourson', 'Flocon', 'Piou-Piou', '1ère étoile'],
+    items: ['Ourson', 'Flocon', 'Flèche', 'Chamois'],
   },{
     id: 39,
     title: 'Instrument de percussion',
@@ -175,7 +175,7 @@ export const gridGroups: GridGroup[] = [
     title: 'Monnaies du monde',
     items: ['Livre', 'Couronne', 'Franc', 'Dong'],
   },{
-    id: 41,
+    id: 37,
     title: 'Danses',
     items: ['Farandole', 'Ronde', 'Rumba', 'Madison'],
   },{
@@ -189,7 +189,7 @@ export const gridGroups: GridGroup[] = [
   },{
     id: 44,
     title: 'Éléments du tableau périodique',
-    items: ['Or', 'Tennesse', 'Iode', 'Lutécium'],
+    items: ['Or', 'Krypton', 'Iode', 'Lutécium'],
   },{
     id: 45,
     title: 'Pâtes',
